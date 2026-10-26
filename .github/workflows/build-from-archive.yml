@@ -25,7 +25,7 @@ jobs:
       - name: Extract source archive
         run: |
           mkdir source
-          unzip -q "Nocturne_Stonebound_Forge_Source (2).zip" -d source
+          unzip -q "Nocturne_Stonebound_Source_Improved.zip" -d source
           PROJECT_DIR="$(find source -type f -name build.gradle -print -quit | xargs dirname)"
           if [ -z "$PROJECT_DIR" ] || [ ! -f "$PROJECT_DIR/settings.gradle" ]; then
             echo "ERROR: Gradle project files not found"
