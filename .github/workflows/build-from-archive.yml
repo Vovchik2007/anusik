@@ -4,8 +4,8 @@ name: Build Nocturne Stonebound
 on:
   push:
     paths:
-      - 'Nocturne_Stonebound_Forge_Source (2).zip'
-      - '.github/workflows/build-from-archive.yml'
+    - 'Nocturne_Stonebound_Source_Improved.zip'
+    - '.github/workflows/build-from-archive.yml'
   workflow_dispatch:
 
 jobs:
