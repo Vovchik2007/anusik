@@ -4,7 +4,7 @@ name: Build Nocturne Stonebound
 on:
   push:
     paths:
-      - 'Nocturne_Stonebound_Forge_Source.zip'
+      - 'Nocturne_Stonebound_Forge_Source (2).zip'
       - '.github/workflows/build-from-archive.yml'
   workflow_dispatch:
 
@@ -20,14 +20,16 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          cache: gradle
 
-      - name: Extract source
+      - name: Extract source archive
         run: |
           mkdir source
-          unzip -q Nocturne_Stonebound_Forge_Source.zip -d source
+          unzip -q "Nocturne_Stonebound_Forge_Source (2).zip" -d source
           GRADLEW="$(find source -type f -name gradlew -print -quit)"
-          test -n "$GRADLEW"
+          if [ -z "$GRADLEW" ]; then
+            echo "ERROR: gradlew not found in ZIP"
+            exit 1
+          fi
           echo "PROJECT_DIR=$(dirname "$GRADLEW")" >> "$GITHUB_ENV"
           chmod +x "$GRADLEW"
 
@@ -36,9 +38,9 @@ jobs:
           cd "$PROJECT_DIR"
           ./gradlew --no-daemon build
 
-      - name: Upload JAR
+      - name: Upload mod JAR
         uses: actions/upload-artifact@v4
         with:
           name: Nocturne-Stonebound-Forge-1.20.1
-          path: source/**/build/libs/*.jar
+          path: ${{ env.PROJECT_DIR }}/build/libs/*.jar
           if-no-files-found: error
