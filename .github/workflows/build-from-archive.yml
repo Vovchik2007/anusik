@@ -21,22 +21,28 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+     
       - name: Extract source archive
         run: |
           mkdir source
           unzip -q "Nocturne_Stonebound_Forge_Source (2).zip" -d source
-          GRADLEW="$(find source -type f -name gradlew -print -quit)"
-          if [ -z "$GRADLEW" ]; then
-            echo "ERROR: gradlew not found in ZIP"
+          PROJECT_DIR="$(find source -type f -name build.gradle -print -quit | xargs dirname)"
+          if [ -z "$PROJECT_DIR" ] || [ ! -f "$PROJECT_DIR/settings.gradle" ]; then
+            echo "ERROR: Gradle project files not found"
             exit 1
           fi
-          echo "PROJECT_DIR=$(dirname "$GRADLEW")" >> "$GITHUB_ENV"
-          chmod +x "$GRADLEW"
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
 
       - name: Build mod
         run: |
           cd "$PROJECT_DIR"
-          ./gradlew --no-daemon build
+          gradle --no-daemon build
+
 
       - name: Upload mod JAR
         uses: actions/upload-artifact@v4
